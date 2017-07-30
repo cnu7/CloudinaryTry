@@ -20,6 +20,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     
     // MARK: - IBOutlets
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
     // MARK: - IBAction methods
 
@@ -45,12 +46,14 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     
     // MARK: - Image Uploader method
     func uploadImage(image: UIImage, id:String, onCompletion: @escaping (_ status: Bool, _ url: String?) -> Void) {
+        showActivityIndicator(show: true)
         params?.setPublicId(id)
         let data = UIImagePNGRepresentation(image) as Data?
         cloudinary?.createUploader().signedUpload(data: data!, params: params, progress: { (progress)  in
             // Handle upload progress
         }, completionHandler: { (response, error) in
             // Handle response
+            self.showActivityIndicator(show: false)
             if error != nil{
                 onCompletion(false, "Upload Failed!!!")
             }else{
@@ -66,6 +69,15 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         params = CLDUploadRequestParams()
         let transformation = CLDTransformation().setWidth(200).setHeight(200)
         params?.setTransformation(transformation)
+    }
+    
+    func showActivityIndicator(show:Bool){
+        self.activityIndicator.isHidden = !show
+        if show {
+            self.activityIndicator.startAnimating()
+        }else{
+            self.activityIndicator.stopAnimating()
+        }
     }
     
    }

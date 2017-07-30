@@ -76,6 +76,14 @@
                                     <action selector="addButtonClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Do9-DB-rt0"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="0BB-RA-dM0">
+                                <rect key="frame" x="162.5" y="309" width="50" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="Qcb-Ec-HOT"/>
+                                    <constraint firstAttribute="height" constant="50" id="w8O-Ox-XNH"/>
+                                </constraints>
+                                <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -84,13 +92,16 @@
                             <constraint firstItem="c9I-DR-4SY" firstAttribute="top" secondItem="aDd-co-eXG" secondAttribute="bottom" id="GUq-1z-mFp"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="c9I-DR-4SY" secondAttribute="bottom" id="S90-Gn-RYK"/>
                             <constraint firstAttribute="trailing" secondItem="7Xk-yt-MGg" secondAttribute="trailing" constant="30" id="Uql-ZT-F6L"/>
+                            <constraint firstItem="0BB-RA-dM0" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="ZyG-jn-SZ8"/>
                             <constraint firstAttribute="trailing" secondItem="aDd-co-eXG" secondAttribute="trailing" id="e43-O2-A9p"/>
+                            <constraint firstItem="0BB-RA-dM0" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="nmd-7D-G0P"/>
                             <constraint firstItem="c9I-DR-4SY" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="o0k-iF-EZN"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="7Xk-yt-MGg" secondAttribute="bottom" constant="30" id="qyB-y4-Wkh"/>
                             <constraint firstItem="aDd-co-eXG" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="sCl-3W-Wn8"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="0BB-RA-dM0" id="WVK-TM-Y6e"/>
                         <outlet property="tableView" destination="c9I-DR-4SY" id="0Bv-bX-tqd"/>
                     </connections>
                 </viewController>
