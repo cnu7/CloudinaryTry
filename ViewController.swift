@@ -23,24 +23,17 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
     // MARK: - IBAction methods
-
     @IBAction func addButtonClicked(_ sender: UIButton) {
         if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum){
-            print("Button capture")
-            
-            imagePicker.delegate = self
-            imagePicker.sourceType = .savedPhotosAlbum;
-            imagePicker.allowsEditing = false
-            
             self.present(imagePicker, animated: true, completion: nil)
         }
     }
     
     // MARK: - ViewController methods
-
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpCloudinary()
+        setUpImagePicker()
         // Do any additional setup after loading the view, typically from a nib.
     }
     
@@ -71,6 +64,14 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         params?.setTransformation(transformation)
     }
     
+    func setUpImagePicker(){
+        imagePicker.delegate = self
+        imagePicker.sourceType = .savedPhotosAlbum;
+        imagePicker.allowsEditing = false
+    }
+    
+    
+    // MARK: - Other methods
     func showActivityIndicator(show:Bool){
         self.activityIndicator.isHidden = !show
         if show {
