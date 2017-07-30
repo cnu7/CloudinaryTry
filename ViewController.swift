@@ -81,6 +81,15 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         }
     }
     
+    func showAlert(title:String, message:String,handler:((_ alert:UIAlertAction) -> Void)? = nil){
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okButton = UIAlertAction(title: "OK",
+                                     style: .cancel, handler: handler)
+        
+        alert.addAction(okButton)
+        present(alert, animated: true, completion: nil)
+    }
+    
    }
 
 extension ViewController:UIImagePickerControllerDelegate{
@@ -96,27 +105,15 @@ extension ViewController:UIImagePickerControllerDelegate{
                 if success{
                     self.imageURLs.append(response!)
                     self.tableView.reloadData()
-                    let alert = UIAlertController(title: "SUCCESS", message: "Image uploaded successfully.", preferredStyle: .alert)
-                    let okButton = UIAlertAction(title: "OK",
-                                                 style: .cancel, handler: { (alert:UIAlertAction) in
+                    self.showAlert(title: "SUCCESS", message: "Image uploaded successfully.", handler: { (alert:UIAlertAction) in
                         self.tableView.scrollToRow(at: IndexPath(row: self.imageURLs.count - 1, section: 0), at: .bottom, animated: true)
                     })
-                    alert.addAction(okButton)
-                    self.present(alert, animated: true, completion: nil)
                 }else{
-                    let alert = UIAlertController(title: "FAILED", message: "Something went wrong. Try uploading again.", preferredStyle: .alert)
-                    let okButton = UIAlertAction(title: "OK",
-                                                 style: .cancel, handler: nil)
-                    alert.addAction(okButton)
-                    self.present(alert, animated: true, completion: nil)
+                    self.showAlert(title: "FAILED", message: "Something went wrong. Try uploading again.", handler: nil)
                 }
             })
         }else{
-            let alert = UIAlertController(title: "Error", message: "Something went wrong. Could not fetch image. Please try again.", preferredStyle: .alert)
-            let okButton = UIAlertAction(title: "OK",
-                                         style: .cancel, handler: nil)
-            alert.addAction(okButton)
-            self.present(alert, animated: true, completion: nil)
+            self.showAlert(title: "Error", message: "Something went wrong. Could not fetch image. Please try again.", handler: nil)
         }
     }
 }
