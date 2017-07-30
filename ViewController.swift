@@ -13,9 +13,10 @@ import SDWebImage
 class ViewController: UIViewController, UINavigationControllerDelegate {
     
     var imagePicker = UIImagePickerController()
-    var selectedImage:UIImage?
+    var selectedImage:UIImage?// to handle image upload failure
     var imageURLs = Array<String>()
-//    var imageDic = Dictionary<String, Any>()
+    var cloudinary:CLDCloudinary?
+    var params:CLDUploadRequestParams?
     
     // MARK: - IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -38,23 +39,16 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setUpCloudinary()
         // Do any additional setup after loading the view, typically from a nib.
     }
     
-    // MARK: - Other methods
+    // MARK: - Image Uploader method
     func uploadImage(image: UIImage, id:String, onCompletion: @escaping (_ status: Bool, _ url: String?) -> Void) {
-        let config = CLDConfiguration(cloudinaryUrl: "cloudinary://155341583529472:4ftWQPJoT_a4DzvIe-eJzxKc0Ro@ds2iaixrj")
-        let cloudinary = CLDCloudinary(configuration: config!)
+        params?.setPublicId(id)
         let data = UIImagePNGRepresentation(image) as Data?
-        let params = CLDUploadRequestParams()
-        let transformation = CLDTransformation().setWidth(200).setHeight(200)
-//        let transformation = CLDTransformation().setWidth(200).setHeight(200).setCrop(.Thumb).setGravity(.Face)
-//        params.setTransformation(CLDTransformation().setGravity(.NorthWest))
-
-        params.setTransformation(transformation)
-        params.setPublicId(id)
-        let req = cloudinary.createUploader().signedUpload(data: data!, params: params, progress: { (progress)  in
-            // Handle progress
+        cloudinary?.createUploader().signedUpload(data: data!, params: params, progress: { (progress)  in
+            // Handle upload progress
         }, completionHandler: { (response, error) in
             // Handle response
             if error != nil{
@@ -63,25 +57,15 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
                onCompletion(true, response?.secureUrl)
             }
         })
-//        let request = cloudinary.createUploader().upload(data: data!, uploadPreset: "", params: params, progress: { (progress) in
-//            // Handle progress
-//        }) { (response, error) in
-//            // Handle response
-//        }
-
-//        cloudinary.createUploader().signedUpload(data: data, params: <#T##CLDUploadRequestParams?#>, progress: <#T##((Progress) -> Void)?##((Progress) -> Void)?##(Progress) -> Void#>, completionHandler: <#T##((CLDUploadResult?, NSError?) -> ())?##((CLDUploadResult?, NSError?) -> ())?##(CLDUploadResult?, NSError?) -> ()#>)
-//        let forUpload = UIImagePNGRepresentation(image)
-//        let uploader:CLUploader = CLUploader(cloudinary, delegate: self)
-//        uploader.upload(forUpload, options: nil,
-//                        withCompletion: { (dataDictionary: [NSObject: AnyObject]!, errorResult:String!, code:Int, context: AnyObject!) -> Void in
-//                            self.uploadResponse = Mapper<ImageUploadResponse>().map(dataDictionary)
-//                            if code < 400 { onCompletion(status: true, url: self.uploadResponse?.imageURL)}
-//                            else {onCompletion(status: false, url: nil)}
-//        },
-//                        andProgress: { (bytesWritten:Int, totalBytesWritten:Int, totalBytesExpectedToWrite:Int, context:AnyObject!) -> Void in
-//                            print("Upload progress: \((totalBytesWritten * 100)/totalBytesExpectedToWrite) %");
-//        }
-//        )
+    }
+    
+    // MARK: - Initial setup methods
+    func setUpCloudinary(){
+        let config = CLDConfiguration(cloudinaryUrl: "cloudinary://155341583529472:4ftWQPJoT_a4DzvIe-eJzxKc0Ro@ds2iaixrj")
+        cloudinary = CLDCloudinary(configuration: config!)
+        params = CLDUploadRequestParams()
+        let transformation = CLDTransformation().setWidth(200).setHeight(200)
+        params?.setTransformation(transformation)
     }
     
    }
@@ -90,7 +74,7 @@ extension ViewController:UIImagePickerControllerDelegate{
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]){
         self.dismiss(animated: true, completion: { () -> Void in
-            
+            // do something after dismisal fo image picker
         })
         
         if let image = info["UIImagePickerControllerOriginalImage"] as! UIImage?{
@@ -114,16 +98,13 @@ extension ViewController:UIImagePickerControllerDelegate{
                     self.present(alert, animated: true, completion: nil)
                 }
             })
+        }else{
+            let alert = UIAlertController(title: "Error", message: "Something went wrong. Could not fetch image. Please try again.", preferredStyle: .alert)
+            let okButton = UIAlertAction(title: "OK",
+                                         style: .cancel, handler: nil)
+            alert.addAction(okButton)
+            self.present(alert, animated: true, completion: nil)
         }
-        
-       
-//        let params = CLDUploadRequestParams()
-//        let trans = CLDTransformation().setCrop("limit").set.setTags("samples").setWidth(200).setHeight(200)
-//        params.setTransformation([trans])
-//        cloudinary.createUploader().upload(url: "sample.jpg",  params: params)
-//            .response({ (resultRes, errorRes) in
-//                print(resultRes)
-//            })
     }
 }
 
@@ -140,22 +121,7 @@ extension ViewController:UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell:ImageTableViewCell = tableView.dequeueReusableCell(withIdentifier: "imageCell", for: indexPath) as! ImageTableViewCell
         cell.customImageView?.sd_setImage(with: URL(string:self.imageURLs[indexPath.row]), placeholderImage: UIImage(named: "placeholder.png"))
-//        if let image = self.imageDic[self.imageURLs[indexPath.row]] as? UIImage{
-//            cell.imageView?.image = image
-//        }else{
-//            //downloadImage
-//            let urlString = self.imageURLs[indexPath.row]
-//            NetworkHelper.sharedInstance.getData(urlString, params: nil, onSuccess: { (data) in
-//                self.imageDic[self.imageURLs[indexPath.row]] = data
-//                if (self.tableView.indexPathsForVisibleRows?.contains(indexPath))! {
-//                    cell.imageView?.image = data as? UIImage
-//                }
-//            }){ (error) in
-//                print(error)
-//            }
-//
-//        }
-        return UITableViewCell()
+        return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
